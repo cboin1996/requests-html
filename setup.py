@@ -12,16 +12,16 @@ from shutil import rmtree
 from setuptools import setup, Command
 
 # Package meta-data.
-NAME = 'requests-html'
-DESCRIPTION = 'HTML Parsing for Humans.'
-URL = 'https://github.com/psf/requests-html'
-EMAIL = 'me@kennethreitz.org'
-AUTHOR = 'Kenneth Reitz'
-VERSION = '0.10.0'
+NAME = 'requests-htmlc'
+DESCRIPTION = 'Playwright Powered HTML Parsing for Humans.'
+URL = 'https://github.com/cboin/requests-html'
+EMAIL = 'christianboin@hotmail.com'
+AUTHOR = 'cboin'
+VERSION = '0.11.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'requests', 'pyquery', 'fake-useragent', 'parse', 'beautifulsoup4', 'w3lib', 'pyppeteer>=0.0.14'
+    'requests', 'pyquery', 'fake-useragent', 'parse', 'beautifulsoup4', 'w3lib', 'playwright', 'lxml_html_clean'
 ]
 
 # The rest you shouldn't have to touch too much :)
