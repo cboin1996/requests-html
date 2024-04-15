@@ -10,7 +10,8 @@ fake-useragent = "*"
 parse = "*"
 "bs4" = "*"
 "w3lib" = "*"
-pyppeteer = "*"
+"lxml_html_clean" = "*"
+playwright = "*"
 "rfc3986" = "*"
 
 [dev-packages]
