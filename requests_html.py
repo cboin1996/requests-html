@@ -6,7 +6,7 @@ from concurrent.futures._base import TimeoutError
 from functools import partial
 from typing import Set, Union, List, MutableMapping, Optional
 
-import pyppeteer
+from playwright.async_api import async_playwright
 import requests
 import http.cookiejar
 from pyquery import PyQuery
@@ -505,7 +505,7 @@ class HTML(BaseParser):
     async def _async_render(self, *, url: str, script: str = None, scrolldown, sleep: int, wait: float, reload, content: Optional[str], timeout: Union[float, int], keep_page: bool, cookies: list = [{}]):
         """ Handle page creation and js rendering. Internal use for render/arender methods. """
         try:
-            page = await self.browser.newPage()
+            page = await self.browser.new_page()
 
             # Wait before rendering the page, to prevent timeouts.
             await asyncio.sleep(wait)
@@ -517,9 +517,9 @@ class HTML(BaseParser):
 
             # Load the given page (GET request, obviously.)
             if reload:
-                await page.goto(url, options={'timeout': int(timeout * 1000)})
+                await page.goto(url, timeout=int(timeout * 1000))
             else:
-                await page.goto(f'data:text/html,{self.html}', options={'timeout': int(timeout * 1000)})
+                await page.goto(f'data:text/html,{self.html}', timeout=int(timeout * 1000))
 
             result = None
             if script:
@@ -781,7 +781,11 @@ class BaseSession(requests.Session):
     @property
     async def browser(self):
         if not hasattr(self, "_browser"):
-            self._browser = await pyppeteer.launch(ignoreHTTPSErrors=not(self.verify), headless=True, args=self.__browser_args)
+            self._playwright = await async_playwright().start()
+            self._browser = await self._playwright.chromium.launch(
+                headless=True, args=self.__browser_args
+            )
+            # self._browser = await pyppeteer.launch(ignoreHTTPSErrors=not(self.verify), headless=True, args=self.__browser_args)
 
         return self._browser
 
@@ -804,6 +808,7 @@ class HTMLSession(BaseSession):
         """ If a browser was created close it first. """
         if hasattr(self, "_browser"):
             self.loop.run_until_complete(self._browser.close())
+            self.loop.run_until_complete(self._playwright.stop())
         super().close()
 
 
@@ -832,6 +837,7 @@ class AsyncHTMLSession(BaseSession):
         """ If a browser was created close it first. """
         if hasattr(self, "_browser"):
             await self._browser.close()
+            await self._playwright.stop()
         super().close()
 
     def run(self, *coros):
