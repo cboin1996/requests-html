@@ -3,15 +3,12 @@ Requests-HTML: HTML Parsing for Humans™
 
 .. image:: https://farm5.staticflickr.com/4695/39152770914_a3ab8af40d_k_d.jpg
 
-.. image:: https://travis-ci.com/psf/requests-html.svg?branch=master
-    :target: https://travis-ci.com/psf/requests-html
-
 This library intends to make parsing HTML (e.g. scraping the web) as
 simple and intuitive as possible.
 
 When using this library you automatically get:
 
-- **Full JavaScript support**! (Using Chromium, thanks to pyppeteer)
+- **Full JavaScript support**! (Using Chromium, thanks to playwright)
 - *CSS Selectors* (a.k.a jQuery-style, thanks to PyQuery).
 - *XPath Selectors*, for the faint of heart.
 - Mocked user-agent (like a real web browser).
@@ -225,11 +222,7 @@ Or you can do this async also:
     ...
     >>> results = asession.run(get_pyclock, get_pyclock, get_pyclock)
 
-The rest of the code operates the same way as the synchronous version except that ``results`` is a list containing multiple response objects however the same basic processes can be applied as above to extract the data you want. 
-
-Note, the first time you ever run the ``render()`` method, it will download
-Chromium into your home directory (e.g. ``~/.pyppeteer/``). This only happens
-once.
+The rest of the code operates the same way as the synchronous version except that ``results`` is a list containing multiple response objects however the same basic processes can be applied as above to extract the data you want.
 
 Using without Requests
 ======================
