@@ -1,8 +1,7 @@
 name: tests
 
 on:
-  push:
-    branches: [main]
+  # run tests on all PR's to main
   pull_request:
     branches: [main]
 
