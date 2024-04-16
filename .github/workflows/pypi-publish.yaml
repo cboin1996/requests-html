@@ -5,6 +5,9 @@ on:
   workflow_run:
     workflows: ["tests"]
     types: ["completed"]
+  push:
+    tags:
+      - "*"
 
 jobs:
   build:
