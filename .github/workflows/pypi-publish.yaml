@@ -97,7 +97,8 @@ jobs:
     needs:
     - build
     runs-on: ubuntu-latest
-
+    # run if push to main
+    if: github.ref == 'refs/heads/main'
     environment:
       name: testpypi
       url: https://test.pypi.org/p/requests-htmlc
