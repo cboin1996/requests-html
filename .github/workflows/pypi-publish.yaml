@@ -1,17 +1,9 @@
 name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
 
-# only run this workflow if tests has completed successfully on the main branch
-on:
-  workflow_run:
-    workflows: ["tests"]
-    types: ["completed"]
-  push:
-    tags:
-      - "*"
+on: push
 
 jobs:
   build:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Build distribution 📦
     runs-on: ubuntu-latest
     
@@ -105,7 +97,8 @@ jobs:
     needs:
     - build
     runs-on: ubuntu-latest
-
+    # run if push to main
+    if: github.ref == 'refs/heads/main'
     environment:
       name: testpypi
       url: https://test.pypi.org/p/requests-htmlc
