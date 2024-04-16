@@ -1,3 +1,22 @@
+APP_NAME=.
+REQUIREMENTS_FILE=requirements.txt
+
+.PHONY: env
+env:
+# check ENV env var has been set
+ifndef ENV
+	$(error Must set ENV variable!)
+endif
+# load env vars from .env file if present
+ifneq ("$(wildcard $(ENV).env)", "")
+	@echo "Loading configuration from $(ENV).env"
+# include cannot be indented
+include $(ENV).env
+else
+	@echo "Continuing without .env file."
+	@echo "Creating template $(ENV).env file"
+endif
+
 .PHONY: setup
 setup:
 	@echo sets up the development environment
@@ -5,9 +24,24 @@ setup:
 	@echo activate venv with 'source venv/bin/activate'
 
 .PHONY: requirements
-requirements:
-	pip install black isort click requests_file pytest pytest-asyncio pytest-cov
+requirements: env
+	pip install -r $(APP_NAME)/$(REQUIREMENTS_FILE)
+# only install dependencies locally if in dev env
+ifeq ($(ENV), dev)
+	echo "install dev dependencies"
+	pip install -e .[dev]
+else
+	echo "installing minimal $(ENV) dependencies"
 	pip install -e .
+endif
+	playwright install
+
+.PHONY: update-requirements
+update-requirements: env
+	pip freeze --exclude-editable | xargs pip uninstall -y
+	rm $(APP_NAME)/$(REQUIREMENTS_FILE) || true
+	pip install -r $(APP_NAME)/requirements.txt.blank
+	pip freeze --exclude-editable > $(APP_NAME)/$(REQUIREMENTS_FILE)
 
 documentation:
 	cd docs && make html

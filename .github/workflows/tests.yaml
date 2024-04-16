@@ -21,8 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e .
-          make requirements
+          pip install -e .[dev]
           playwright install
       - name: Test with pytest
         run: |
