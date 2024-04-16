@@ -8,11 +8,14 @@ license={text="MIT License"}
 authors = [
     {name = "Christian Boin"},
 ]
-version = "0.0.3"
+version = "0.0.4"
 description = "Fork of requests-html, powered by playwright"
 readme = "README.rst"
 requires-python = ">=3.11"
 dynamic = ["dependencies"]
+
+[tool.setuptools]
+py-modules = ["requests_html"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
