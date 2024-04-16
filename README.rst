@@ -247,3 +247,12 @@ Installation
     ✨🍰✨
 
 Only **Python 3.6 and above** is supported.
+
+Ensure you have playwright installed:
+(the below command works because playwright
+is installed via pip during the Installation
+of requests-htmlc)
+ 
+.. code-block:: shell
+
+    $ playwright install
