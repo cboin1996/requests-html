@@ -1,5 +1,5 @@
 Requests-HTMLC: Fork of Requests-HTML, using PlayWright
-=======================================
+=======================================================
 
 .. image:: https://farm5.staticflickr.com/4695/39152770914_a3ab8af40d_k_d.jpg
 
