@@ -3,18 +3,18 @@ from requests_html import HTMLSession, AsyncHTMLSession, HTMLResponse
 
 
 urls = [
-    'https://xkcd.com/1957/',
+    "https://xkcd.com/1957/",
     # TODO: pagination in github CI not working for reddit
     # 'https://www.reddit.com/',
-    'https://github.com/psf/requests-html/issues',
-    'https://discord.com/category/engineering',
-    'https://stackoverflow.com/',
-    'https://www.frontiersin.org/',
-    'https://azure.microsoft.com/en-us'
+    "https://github.com/psf/requests-html/issues",
+    "https://discord.com/category/engineering",
+    "https://stackoverflow.com/",
+    "https://www.frontiersin.org/",
+    "https://azure.microsoft.com/en-us",
 ]
 
 
-@pytest.mark.parametrize('url', urls)
+@pytest.mark.parametrize("url", urls)
 @pytest.mark.internet
 def test_pagination(url: str):
     session = HTMLSession()
@@ -22,7 +22,7 @@ def test_pagination(url: str):
     assert next(r.html)
 
 
-@pytest.mark.parametrize('url', urls)
+@pytest.mark.parametrize("url", urls)
 @pytest.mark.internet
 @pytest.mark.asyncio
 async def test_async_pagination(event_loop, url):
@@ -38,8 +38,10 @@ def test_async_run():
 
     async_list = []
     for url in urls:
+
         async def _test():
             return await asession.get(url)
+
         async_list.append(_test)
 
     r = asession.run(*async_list)

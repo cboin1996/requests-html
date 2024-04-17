@@ -1,4 +1,4 @@
-name: tests
+name: python-tests
 
 on:
   # run tests on all PR's to main
