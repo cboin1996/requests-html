@@ -1,0 +1,8 @@
+requests
+pyquery
+fake-useragent
+parse
+beautifulsoup4
+w3lib
+lxml_html_clean
+playwright

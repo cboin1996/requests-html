@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "requests-htmlc"
+license={text="MIT License"}
+authors = [
+    {name = "Christian Boin"},
+]
+version = "0.0.4"
+description = "Fork of requests-html, powered by playwright"
+readme = "README.rst"
+requires-python = ">=3.11"
+dynamic = ["dependencies"]
+
+[tool.setuptools]
+py-modules = ["requests_html"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.optional-dependencies]
+# these dependencies are required for development,
+# not for running the package.
+dev = [
+    "black",
+    "click",
+    "isort",
+    "pytest",
+    "pytest-cov",
+    "requests-file",
+    # e1839a8 = {path = ".",editable = true}
+    "sphinx",
+    "pytest-asyncio"
+]
+package = [
+    "build",
+    "twine"
+]
+
+[tool.setuptools.packages.find]
+exclude = ["junit", "LISENSE"]
