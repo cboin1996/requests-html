@@ -10,7 +10,7 @@ authors = [
 ]
 version = "0.0.5"
 description = "Fork of requests-html, powered by playwright"
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.11"
 dynamic = ["dependencies"]
 
