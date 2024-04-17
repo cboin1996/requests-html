@@ -6,7 +6,7 @@ jobs:
   build:
     name: Build distribution 📦
     runs-on: ubuntu-latest
-    
+    if: github.ref != 'refs/heads/gh-pages'  
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
