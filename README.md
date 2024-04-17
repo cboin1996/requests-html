@@ -22,7 +22,7 @@ Other nice features include:
 ## Tutorial & Usage
 
 Below is a summary of usage for this package.
-For detailed api documentation, see [here](https://cboin1996.github.io/requests-htmlc)
+For detailed api documentation, see [here](https://cboin1996.github.io/requests-html)
 
 Make a GET request to 'python.org', using Requests:
 

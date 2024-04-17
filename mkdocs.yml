@@ -1,7 +1,7 @@
 site_name: requests-htmlc
 site_description: Fork of Requests-HTML, using PlayWright
 strict: true
-site_url: https://cboin1996.github.io/requests-htmlc
+site_url: https://cboin1996.github.io/requests-html
 site_dir: public
 
 repo_name: cboin1996/requests-html
