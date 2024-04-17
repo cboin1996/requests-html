@@ -3,12 +3,14 @@ name: pages
 on:
   pull_request:
     branches: [main]
-  release:
-    types: [published]
+  push:
+    tags:
+      - '*'
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
       - name: install requirements
@@ -24,6 +26,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
       - name: set up Python 3.11
@@ -39,8 +42,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'release' }}
-    needs: [lint, test]
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/checkout@v4
       - name: set up Python 3.11
