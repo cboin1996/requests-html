@@ -1,5 +1,6 @@
 import sys
 import asyncio
+from asyncio import AbstractEventLoop
 from urllib.parse import urlparse, urlunparse, urljoin
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures._base import TimeoutError
@@ -70,11 +71,11 @@ class MaxRetries(Exception):
 class BaseParser:
     """A basic HTML/Element Parser, for Humans.
 
-    :param element: The element from which to base the parsing upon.
-    :param default_encoding: Which encoding to default to.
-    :param html: HTML from which to base the parsing upon (optional).
-    :param url: The URL from which the HTML originated, used for ``absolute_links``.
-
+    Args:
+        element (Any): The element from which to base the parsing upon.
+        default_encoding (_DefaultEncoding, optional): Which encoding to default to.
+        html (_HTML, optional): HTML from which to base the parsing upon (optional).
+        url (_URL, optional): The URL from which the HTML originated, used for `absolute_links`.
     """
 
     def __init__(self, *, element, default_encoding: _DefaultEncoding = None, html: _HTML = None, url: _URL) -> None:
@@ -119,7 +120,7 @@ class BaseParser:
     @property
     def encoding(self) -> _Encoding:
         """The encoding string to be used, extracted from the HTML and
-        :class:`HTMLResponse <HTMLResponse>` headers.
+        `HTMLResponse <HTMLResponse>` headers.
         """
         if self._encoding:
             return self._encoding
@@ -144,7 +145,7 @@ class BaseParser:
     @property
     def pq(self) -> PyQuery:
         """`PyQuery <https://pythonhosted.org/pyquery/>`_ representation
-        of the :class:`Element <Element>` or :class:`HTML <HTML>`.
+        of the `Element <Element>` or `HTML <HTML>`.
         """
         if self._pq is None:
             self._pq = PyQuery(self.lxml)
@@ -154,7 +155,7 @@ class BaseParser:
     @property
     def lxml(self) -> HtmlElement:
         """`lxml <http://lxml.de>`_ representation of the
-        :class:`Element <Element>` or :class:`HTML <HTML>`.
+        `Element <Element>` or `HTML <HTML>`.
         """
         if self._lxml is None:
             try:
@@ -167,40 +168,41 @@ class BaseParser:
     @property
     def text(self) -> _Text:
         """The text content of the
-        :class:`Element <Element>` or :class:`HTML <HTML>`.
+        `Element <Element>` or `HTML <HTML>`.
         """
         return self.pq.text()
 
     @property
     def full_text(self) -> _Text:
         """The full text content (including links) of the
-        :class:`Element <Element>` or :class:`HTML <HTML>`.
+        `Element <Element>` or `HTML <HTML>`.
         """
         return self.lxml.text_content()
 
     def find(self, selector: str = "*", *, containing: _Containing = None, clean: bool = False, first: bool = False, _encoding: str = None) -> _Find:
         """Given a CSS Selector, returns a list of
-        :class:`Element <Element>` objects or a single one.
+        `Element <Element>` objects or a single one.
 
-        :param selector: CSS Selector to use.
-        :param clean: Whether or not to sanitize the found HTML of ``<script>`` and ``<style>`` tags.
-        :param containing: If specified, only return elements that contain the provided text.
-        :param first: Whether or not to return just the first result.
-        :param _encoding: The encoding format.
+        Args:
+            selector (str, optional): CSS Selector to use.
+            clean (bool, optional): Whether or not to sanitize the found HTML of `<script>` and `<style>` tags.
+            containing (_Containing, optional): If specified, only return elements that contain the provided text.
+            first (bool, optional): Whether or not to return just the first result.
+            _encoding (str, optional): The encoding format. Defaults to None
 
         Example CSS Selectors:
 
-        - ``a``
-        - ``a.someClass``
-        - ``a#someID``
-        - ``a[target=_blank]``
+        - `a`
+        - `a.someClass`
+        - `a#someID`
+        - `a[target=_blank]`
 
         See W3School's `CSS Selectors Reference
         <https://www.w3schools.com/cssref/css_selectors.asp>`_
         for more details.
 
-        If ``first`` is ``True``, only returns the first
-        :class:`Element <Element>` found.
+        If `first` is `True`, only returns the first
+        `Element <Element>` found.
         """
 
         # Convert a single containing into a list.
@@ -236,22 +238,23 @@ class BaseParser:
 
     def xpath(self, selector: str, *, clean: bool = False, first: bool = False, _encoding: str = None) -> _XPath:
         """Given an XPath selector, returns a list of
-        :class:`Element <Element>` objects or a single one.
+        `Element <Element>` objects or a single one.
 
-        :param selector: XPath Selector to use.
-        :param clean: Whether or not to sanitize the found HTML of ``<script>`` and ``<style>`` tags.
-        :param first: Whether or not to return just the first result.
-        :param _encoding: The encoding format.
+        Args:
+            selector (str): XPath Selector to use.
+            clean (bool, optional): Whether or not to sanitize the found HTML of `<script>` and `<style>` tags.
+            first (bool, optional): Whether or not to return just the first result.
+            _encoding (str, optional): The encoding format.
 
-        If a sub-selector is specified (e.g. ``//a/@href``), a simple
+        If a sub-selector is specified (e.g. `//a/@href`), a simple
         list of results is returned.
 
         See W3School's `XPath Examples
         <https://www.w3schools.com/xml/xpath_examples.asp>`_
         for more details.
 
-        If ``first`` is ``True``, only returns the first
-        :class:`Element <Element>` found.
+        If `first` is `True`, only returns the first
+        `Element <Element>` found.
         """
         selected = self.lxml.xpath(selector)
 
@@ -273,18 +276,20 @@ class BaseParser:
         return _get_first_or_list(elements, first)
 
     def search(self, template: str) -> Result:
-        """Search the :class:`Element <Element>` for the given Parse template.
+        """Search the `Element <Element>` for the given Parse template.
 
-        :param template: The Parse template to use.
+        Args:
+            template (str): The Parse template to use.
         """
 
         return parse_search(template, self.html)
 
     def search_all(self, template: str) -> _Result:
-        """Search the :class:`Element <Element>` (multiple times) for the given parse
+        """Search the `Element <Element>` (multiple times) for the given parse
         template.
 
-        :param template: The Parse template to use.
+        Args:
+            template (str): The Parse template to use.
         """
         return [r for r in findall(template, self.html)]
 
@@ -340,7 +345,7 @@ class BaseParser:
 
     @property
     def base_url(self) -> _URL:
-        """The base URL for the page. Supports the ``<base>`` tag
+        """The base URL for the page. Supports the `<base>` tag
         (`learn more <https://www.w3schools.com/tags/tag_base.asp>`_)."""
 
         # Support for <base> tag.
@@ -364,12 +369,6 @@ class BaseParser:
 
 
 class Element(BaseParser):
-    """An element of HTML.
-
-    :param element: The element from which to base the parsing upon.
-    :param url: The URL from which the HTML originated, used for ``absolute_links``.
-    :param default_encoding: Which encoding to default to.
-    """
 
     __slots__ = [
         'element', 'url', 'skip_anchors', 'default_encoding', '_encoding',
@@ -377,6 +376,13 @@ class Element(BaseParser):
     ]
 
     def __init__(self, *, element, url: _URL, default_encoding: _DefaultEncoding = None) -> None:
+        """An element of HTML.
+
+        Args:
+            element (Any): The element from which to base the parsing upon.
+            url (_URL): The URL from which the HTML originated, used for `absolute_links`.
+            default_encoding (_DefaultEncoding, optional): Which encoding to default to. Defaults to None.
+        """
         super(Element, self).__init__(element=element, url=url, default_encoding=default_encoding)
         self.element = element
         self.tag = element.tag
@@ -389,7 +395,7 @@ class Element(BaseParser):
 
     @property
     def attrs(self) -> _Attrs:
-        """Returns a dictionary of the attributes of the :class:`Element <Element>`
+        """Returns a dictionary of the attributes of the `Element <Element>`
         (`learn more <https://www.w3schools.com/tags/ref_attributes.asp>`_).
         """
         if self._attrs is None:
@@ -404,14 +410,15 @@ class Element(BaseParser):
 
 
 class HTML(BaseParser):
-    """An HTML document, ready for parsing.
-
-    :param url: The URL from which the HTML originated, used for ``absolute_links``.
-    :param html: HTML from which to base the parsing upon (optional).
-    :param default_encoding: Which encoding to default to.
-    """
-
+    
     def __init__(self, *, session: Union['HTMLSession', 'AsyncHTMLSession'] = None, url: str = DEFAULT_URL, html: _HTML, default_encoding: str = DEFAULT_ENCODING, async_: bool = False) -> None:
+        """An HTML document, ready for parsing.
+
+        Args:
+            url (str, optional): The URL from which the HTML originated, used for `absolute_links`.
+            html (_HTML, optional): HTML from which to base the parsing upon (optional).
+            default_encoding (str, optional): Which encoding to default to.
+        """
 
         # Convert incoming unicode HTML into bytes.
         if isinstance(html, str):
@@ -432,11 +439,15 @@ class HTML(BaseParser):
         return f"<HTML url={self.url!r}>"
 
     def next(self, fetch: bool = False, next_symbol: _NextSymbol = None) -> _Next:
-        """Attempts to find the next page, if there is one. If ``fetch``
-        is ``True`` (default), returns :class:`HTML <HTML>` object of
-        next page. If ``fetch`` is ``False``, simply returns the next URL.
+        """Attempts to find the next page, if there is one. If `fetch`
+        is `True` (default), returns `HTML <HTML>` object of
+        next page. If `fetch` is `False`, simply returns the next URL.
 
+        Args:
+            fetch (bool, optional): dictates whether to fetch the next page, or return next url
+            next_symbol (_NextSymbol, optional): if specified, only fetch elements containing this text value
         """
+
         if next_symbol is None:
             next_symbol = DEFAULT_NEXT_SYMBOL
 
@@ -553,17 +564,17 @@ class HTML(BaseParser):
         # |  setCookie(self, *cookies:dict) -> None
         # |      Set cookies.
         # |
-        # |      ``cookies`` should be dictionaries which contain these fields:
+        # |      `cookies` should be dictionaries which contain these fields:
         # |
-        # |      * ``name`` (str): **required**
-        # |      * ``value`` (str): **required**
-        # |      * ``url`` (str)
-        # |      * ``domain`` (str)
-        # |      * ``path`` (str)
-        # |      * ``expires`` (number): Unix time in seconds
-        # |      * ``httpOnly`` (bool)
-        # |      * ``secure`` (bool)
-        # |      * ``sameSite`` (str): ``'Strict'`` or ``'Lax'``
+        # |      * `name` (str): **required**
+        # |      * `value` (str): **required**
+        # |      * `url` (str)
+        # |      * `domain` (str)
+        # |      * `path` (str)
+        # |      * `expires` (number): Unix time in seconds
+        # |      * `httpOnly` (bool)
+        # |      * `secure` (bool)
+        # |      * `sameSite` (str): `'Strict'` or `'Lax'`
         cookie_render = {}
         def __convert(cookiejar, key):
             try:
@@ -604,29 +615,30 @@ class HTML(BaseParser):
         """Reloads the response in Chromium, and replaces HTML content
         with an updated version, with JavaScript executed.
 
-        :param retries: The number of times to retry loading the page in Chromium.
-        :param script: JavaScript to execute upon page load (optional).
-        :param wait: The number of seconds to wait before loading the page, preventing timeouts (optional).
-        :param scrolldown: Integer, if provided, of how many times to page down.
-        :param sleep: Integer, if provided, of how many seconds to sleep after initial render.
-        :param reload: If ``False``, content will not be loaded from the browser, but will be provided from memory.
-        :param keep_page: If ``True`` will allow you to interact with the browser page through ``r.html.page``.
+        Args:
+            retries (int, optional): The number of times to retry loading the page in Chromium.
+            script (str, optional): JavaScript to execute upon page load (optional).
+            wait (float, optional): The number of seconds to wait before loading the page, preventing timeouts (optional).
+            scrolldown (bool, optional): Integer, if provided, of how many times to page down.
+            sleep (int, optional): Integer, if provided, of how many seconds to sleep after initial render.
+            reload (bool, optional): If `False`, content will not be loaded from the browser, but will be provided from memory.
+            timeout (Union[float, int], optional): specify a timeout for the render
+            keep_page (bool, optional): If `True` will allow you to interact with the browser page through `r.html.page`.
+            send_cookies_session (bool, optional): If `True` send `HTMLSession.cookies` convert.
+            cookies (list, optional): If not `empty` send `cookies`.
 
-        :param send_cookies_session: If ``True`` send ``HTMLSession.cookies`` convert.
-        :param cookies: If not ``empty`` send ``cookies``.
-
-        If ``scrolldown`` is specified, the page will scrolldown the specified
+        If `scrolldown` is specified, the page will scrolldown the specified
         number of times, after sleeping the specified amount of time
-        (e.g. ``scrolldown=10, sleep=1``).
+        (e.g. `scrolldown=10, sleep=1`).
 
-        If just ``sleep`` is provided, the rendering will wait *n* seconds, before
+        If just `sleep` is provided, the rendering will wait *n* seconds, before
         returning.
 
-        If ``script`` is specified, it will execute the provided JavaScript at
+        If `script` is specified, it will execute the provided JavaScript at
         runtime. Example:
 
-        .. code-block:: python
 
+        ```python
             script = \"\"\"
                 () => {
                     return {
@@ -636,16 +648,16 @@ class HTML(BaseParser):
                     }
                 }
             \"\"\"
+        ```
 
-        Returns the return value of the executed  ``script``, if any is provided:
+        Returns the return value of the executed  `script`, if any is provided:
 
-        .. code-block:: python
-
+        ```python
             >>> r.html.render(script=script)
             {'width': 800, 'height': 600, 'deviceScaleFactor': 1}
+        ```
 
-        Warning: the first time you run this method, it will download
-        Chromium into your home directory (``~/.pyppeteer``).
+        Note: method requires that you have run `playwright install`
         """
 
         self.browser = self.session.browser  # Automatically create a event loop and browser
@@ -709,8 +721,8 @@ class HTML(BaseParser):
 
 
 class HTMLResponse(requests.Response):
-    """An HTML-enabled :class:`requests.Response <requests.Response>` object.
-    Effectively the same, but with an intelligent ``.html`` property added.
+    """An HTML-enabled `requests.Response <requests.Response>` object.
+    Effectively the same, but with an intelligent `.html` property added.
     """
 
     def __init__(self, session: Union['HTMLSession', 'AsyncHTMLSession']) -> None:
@@ -785,7 +797,6 @@ class BaseSession(requests.Session):
             self._browser = await self._playwright.chromium.launch(
                 headless=True, args=self.__browser_args
             )
-            # self._browser = await pyppeteer.launch(ignoreHTTPSErrors=not(self.verify), headless=True, args=self.__browser_args)
 
         return self._browser
 
@@ -815,14 +826,17 @@ class HTMLSession(BaseSession):
 class AsyncHTMLSession(BaseSession):
     """ An async consumable session. """
 
-    def __init__(self, loop=None, workers=None,
+    def __init__(self, loop: Optional[AbstractEventLoop]=None, workers: Optional[int]=None,
                  mock_browser: bool = True, *args, **kwargs):
         """ Set or create an event loop and a thread pool.
 
-            :param loop: Asyncio loop to use.
-            :param workers: Amount of threads to use for executing async calls.
+        Args:
+            loop (Optional[AbstractEventLoop], optional): Asyncio loop to use.
+            workers (Optional[int], optional): Amount of threads to use for executing async calls.
                 If not pass it will default to the number of processors on the
-                machine, multiplied by 5. """
+                machine, multiplied by 5.
+
+        """
         super().__init__(*args, **kwargs)
 
         self.loop = loop or asyncio.get_event_loop()
@@ -841,9 +855,11 @@ class AsyncHTMLSession(BaseSession):
         super().close()
 
     def run(self, *coros):
-        """ Pass in all the coroutines you want to run, it will wrap each one
-            in a task, run it and wait for the result. Return a list with all
-            results, this is returned in the same order coros are passed in. """
+        """ 
+        Pass in all the coroutines you want to run, it will wrap each one
+        in a task, run it and wait for the result. Return a list with all
+        results, this is returned in the same order coros are passed in.
+        """
         tasks = [
             asyncio.ensure_future(coro()) for coro in coros
         ]

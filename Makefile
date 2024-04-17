@@ -48,6 +48,27 @@ documentation:
 	cd docs/build/html && git add -A && git commit -m 'updates'
 	cd docs/build/html && git push origin gh-pages
 
+# documentation targets
+.PHONY: docs-lint
+docs-lint:
+	@echo linting files at docs/**/*.md
+	markdownlint docs/**/*.md
+
+.PHONY: docs-serve
+docs-serve:
+	@echo serving the site on http://localhost:8000
+	mkdocs serve
+
+.PHONY: docs-build
+docs-build:
+	@echo building the site
+	mkdocs build --strict --verbose --site-dir public
+
+.PHONY: lint
+lint:
+	black $(APP_NAME)/.
+	black tests
+	
 test:
 	python -m pytest tests -v
 
