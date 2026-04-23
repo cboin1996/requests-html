@@ -19,9 +19,7 @@ def get():
 
 
 @pytest.fixture
-def async_get(event_loop):
-    """AsyncSession cannot be created global since it will create
-    a different loop from pytest-asyncio."""
+async def async_get():
     async_session = AsyncHTMLSession()
     async_session.mount("file://", FileAdapter())
     path = os.path.sep.join((os.path.dirname(os.path.abspath(__file__)), "python.html"))
