@@ -16,11 +16,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: uv sync --extra dev
-      - name: Install playwright browsers
-        run: uv run playwright install chromium
+        run: make setup
       - name: Test with pytest
-        run: uv run pytest --junitxml=junit/test-results-${{ matrix.python-version }}.xml tests -v
+        run: make test JUNIT=junit/test-results-${{ matrix.python-version }}.xml
       - name: Upload pytest results
         uses: actions/upload-artifact@v5
         with:

@@ -15,13 +15,15 @@ lint:
 	uv run black $(APP_NAME)/.
 	uv run black tests
 
+JUNIT ?= junit/test-results.xml
+
 .PHONY: test
 test:
-	uv run pytest tests -v
+	uv run pytest -m "not internet" --junitxml=$(JUNIT) tests -v
 
-.PHONY: test-reports
-test-reports:
-	uv run pytest --doctest-modules --junitxml=junit/test-results.xml --cov=requests-html --cov-report=xml --cov-report=html tests -v
+.PHONY: test-internet
+test-internet:
+	uv run pytest -m internet tests -v
 
 .PHONY: docs-lint
 docs-lint:
