@@ -19,11 +19,7 @@ JUNIT ?= junit/test-results.xml
 
 .PHONY: test
 test:
-	uv run pytest -m "not internet" --junitxml=$(JUNIT) tests -v
-
-.PHONY: test-internet
-test-internet:
-	uv run pytest -m internet tests -v
+	uv run pytest --junitxml=$(JUNIT) tests -v
 
 .PHONY: docs-lint
 docs-lint:
