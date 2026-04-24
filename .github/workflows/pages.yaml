@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: install requirements
         run: |
           sudo apt update
@@ -28,15 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
-      - name: set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.11
+          python-version: "3.11"
       - name: install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .[dev]
+        run: make setup
       - name: test the site builds
         run: make docs-build
 
@@ -44,24 +41,18 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - uses: actions/checkout@v4
-      - name: set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.11
+          python-version: "3.11"
       - name: install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .[dev]
+        run: make setup
       - name: get tag
         id: tag
         run: |
-          ref="${GITHUB_REF}"
           tag=$(echo $GITHUB_REF | sed 's/refs\/tags\///g')
           echo "tag=$tag" >> $GITHUB_OUTPUT
       - name: deploy
-      # the below steps are referenced from
-      # https://github.com/jimporter/mike#deploying-via-ci
         run: |
           git fetch origin gh-pages --depth=1
           git config user.name github-actions
