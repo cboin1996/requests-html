@@ -950,6 +950,15 @@ class HTMLSession(BaseSession):
     @property
     def browser(self):
         if not hasattr(self, "_browser"):
+            try:
+                asyncio.get_running_loop()
+                raise RuntimeError(
+                    "HTMLSession.browser cannot be called from within an async context. "
+                    "Use AsyncHTMLSession instead."
+                )
+            except RuntimeError as e:
+                if "no running event loop" not in str(e):
+                    raise
             self.loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
             self._browser = self.loop.run_until_complete(super().browser)
